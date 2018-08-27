@@ -175,7 +175,9 @@ func TestMain(m *testing.M) {
 `log.Fatal()` or `os.Exit()`, and no guarantees can be given if any of those functions is invoked.
 - The package replaces the `io.Writer` used by the standard logger, so the writer should not be replaced
 again by the application;
-- Only goroutines started via the package API are waited on before termination.
+- Only goroutines started via the package API are waited on before termination;
+- The package does not handle panics, although certain effort has been made to ensure resources
+are released when a panic is triggered.
 
 #### Project status
 Tested on Linux Mint 18.3 using Go version 1.10.3.
