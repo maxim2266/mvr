@@ -5,7 +5,7 @@
 [![License: BSD 3-Clause](https://img.shields.io/badge/License-BSD_3--Clause-yellow.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
 ## Motivation
-When starting a new project there always is a certain amount of low-level code that has to
+When starting a new project there always is a certain amount of low-level code that has to be
 written in order to provide for some basic runtime functionality, like top-level context, signal handlers, etc. Often this kind of code is either written from scratch, or brought in with an external library.
 Programming the same functionality from scratch is usually tedious and error-prone, while external libraries may sometimes be just too heavy for the intended use, introduce significant overhead, or
 impose an uncomfortable programming model. This project is an attempt to bring a number of frequently used
