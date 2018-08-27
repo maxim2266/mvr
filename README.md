@@ -35,35 +35,31 @@ The `mvr.Run()` function never returns.
 ## Top-level context
 The top-level context gets initialised (along with the rest of the package) when the application
 invokes `mvr.Run()` function. The context is accessible via `mvr.Context()` function, with the
-shortcuts `mvr.Done()` and `mvr.Err()` giving access to the corresponding methods of the top context.
+shortcuts `mvr.Done()` and `mvr.Err()` both giving access to the corresponding methods of the top context.
 The context is cancelled when either `os.Interrupt` or `os.Kill` signal is delivered,
-or `mvr.Cancel()` function is invoked. Internally, the signal handlers simply call the `mvr.Cancel()`
-function, which by default only cancels the top context. The `mvr.Cancel()` function is
-exposed as a variable, so that it can be replaced with a user-defined function. The replacement function
-must call the original cancellation function at some point, apart from that it is free to perform
-any other action. Example:
+or `mvr.Cancel()` function is called.
+
+Example of attaching a cancellation handler to the top context:
 ```go
 srv := &http.Server{ ... }
 
-// terminarion handler
-stop := mvr.Cancel
+// termination handler
+mvr.Go(func() {
+	<-mvr.Done()
 
-mvr.Cancel = func() {
-	ctx, cancel := context.WithTimeout(mvr.Context(), 10*time.Second)
+	// using context.Background() because the top context has just been cancelled.
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 
 	defer cancel()
 
 	if err := srv.Shutdown(ctx); err != nil {
 		log.Println(err)
 	}
-
-	stop()
-}
+})
 
 // serve
 return srv.ListenAndServe()
 ```
-This example assumes there are no concurrent attempts to replace `mvr.Cancel` handler.
 
 ## Goroutine invocation
 In order to ensure graceful shutdown the package keeps track of all goroutines invoked

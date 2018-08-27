@@ -38,9 +38,6 @@ func Run(main func() int) {
 	// logger set-up
 	log.SetOutput(logger{})
 
-	// top-level context
-	gctx, Cancel = context.WithCancel(context.Background())
-
 	// signal handlers
 	signal.Notify(sigch, os.Interrupt, os.Kill)
 
@@ -55,7 +52,7 @@ loop:
 		select {
 		case _, running := <-sigch:
 			if running {
-				Cancel()
+				gcancel()
 			} else {
 				break loop
 			}
@@ -79,12 +76,10 @@ loop:
 
 var gcount int32
 var sigch = make(chan os.Signal, 1)
-var gctx context.Context
+var gctx, gcancel = context.WithCancel(context.Background())
 
-// Cancel cancels the top-level context. This is a variable, so it can be replaced
-// to perform more actions when the cancellation is being requested, provided that the
-// original function is called as well.
-var Cancel func()
+// Cancel cancels the top-level context.
+func Cancel() { gcancel() }
 
 // Context returns the top-level context.
 func Context() context.Context { return gctx }
