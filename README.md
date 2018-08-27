@@ -41,7 +41,29 @@ or `mvr.Cancel()` function is invoked. Internally, the signal handlers simply ca
 function, which by default only cancels the top context. The `mvr.Cancel()` function is
 exposed as a variable, so that it can be replaced with a user-defined function. The replacement function
 must call the original cancellation function at some point, apart from that it is free to perform
-any other action.
+any other action. Example:
+```go
+srv := &http.Server{ ... }
+
+// terminarion handler
+stop := mvr.Cancel
+
+mvr.Cancel = func() {
+	ctx, cancel := context.WithTimeout(mvr.Context(), 10*time.Second)
+
+	defer cancel()
+
+	if err := srv.Shutdown(ctx); err != nil {
+		log.Println(err)
+	}
+
+	stop()
+}
+
+// serve
+return srv.ListenAndServe()
+```
+This example assumes there are no concurrent attempts to replace `mvr.Cancel` handler.
 
 ## Goroutine invocation
 In order to ensure graceful shutdown the package keeps track of all goroutines invoked
