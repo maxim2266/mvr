@@ -163,7 +163,7 @@ writes to `os.Stderr`.
 
 ## Testing
 For unit-testing of an application utilising this package the correct initialisation of the runtime can be
-ensured by defining `TextMain` function from which all the tests are invoked, typically:
+ensured by defining `TestMain` function from which all the tests are invoked, typically:
 ```go
 func TestMain(m *testing.M) {
 	mvr.Run(m.Run)
@@ -176,7 +176,7 @@ func TestMain(m *testing.M) {
 - The package replaces the `io.Writer` used by the standard logger, so the writer should not be replaced
 again by the application;
 - Only goroutines started via the package API are waited on before termination;
-- The package does not handle panics, although certain effort has been made to ensure resources
+- The package does not handle panics, although certain effort has been made to make sure resources
 are released when a panic is triggered.
 
 #### Project status
