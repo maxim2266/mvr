@@ -60,8 +60,8 @@ func Go(fn func()) {
 }
 
 // Run takes the application entry point function as a parameter, and executes it in a separate goroutine.
-// The return value of the main function will be passed over to os.Exit(). The Run() function itself
-// never returns.
+// The return value of the main function will be passed over to os.Exit(). The main function cancels
+// the top-level context upon exit. The Run() function itself never returns.
 func Run(main func() int) {
 	// logger set-up
 	log.SetOutput(logger{})
@@ -72,7 +72,11 @@ func Run(main func() int) {
 	// start main function
 	var ret int
 
-	Go(func() { ret = main() })
+	Go(func() {
+		defer Cancel()
+
+		ret = main()
+	})
 
 	// main loop
 loop:
