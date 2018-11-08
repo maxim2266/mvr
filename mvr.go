@@ -41,6 +41,7 @@ import (
 	"os/signal"
 	"runtime"
 	"sync/atomic"
+	"syscall"
 )
 
 // Go starts the given function in a new goroutine registered with the runtime.
@@ -67,7 +68,7 @@ func Run(main func() int) {
 	log.SetOutput(logger{})
 
 	// signal handlers
-	signal.Notify(sigch, os.Interrupt, os.Kill)
+	signal.Notify(sigch, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM)
 
 	// start main function
 	var ret int
