@@ -36,7 +36,7 @@ The `mvr.Run()` function never returns.
 The top-level context gets initialised (along with the rest of the package) when the application
 invokes `mvr.Run()` function. The context is accessible via `mvr.Context()` function, with the
 shortcuts `mvr.Done()` and `mvr.Err()` both giving access to the corresponding methods of the top context.
-The context is cancelled when either `os.Interrupt` or `os.Kill` signal is delivered,
+The context is cancelled when any of `syscall.SIGHUP`, `syscall.SIGINT`, or `syscall.SIGTERM` is delivered,
 or `mvr.Cancel()` function is called.
 
 Example of attaching a cancellation handler to the top context:
