@@ -6,8 +6,10 @@
 
 ## Motivation
 When starting a new project there always is a certain amount of low-level code that has to be
-written in order to provide for some basic runtime functionality, like top-level context, signal handlers, etc. Often this kind of code is either written from scratch, or brought in with an external library.
-Programming the same functionality from scratch is usually tedious and error-prone, while external libraries may sometimes be just too heavy for the intended use, introduce significant overhead, or
+written in order to provide for some basic runtime functionality, like top-level context, signal handlers, etc.
+Often this kind of code is either written from scratch, or brought in with an external library.
+Programming the same functionality from scratch tends to be tedious and error-prone, while external libraries
+may sometimes be just too heavy for the intended use, introduce significant overhead, or
 impose an uncomfortable programming model. This project is an attempt to bring a number of frequently used
 runtime functions into one place without introducing another fat API or adding many external dependencies.
 
@@ -16,7 +18,7 @@ The package adds the following functionality:
 - Graceful shutdown to make sure all goroutines have completed before the application terminates;
 - A simple way of running a bunch of tasks on a pool of goroutines;
 - Asynchronous logging, where the actual writing to the log file is done in the background to make sure
-performance-critical code is not exposed to the i/o latencies of writing to the log.
+performance-critical code is not exposed to the i/o latency of writing to the log.
 
 
 ## Application entry point
@@ -36,8 +38,8 @@ The `mvr.Run()` function never returns.
 The top-level context gets initialised (along with the rest of the package) when the application
 invokes `mvr.Run()` function. The context is accessible via `mvr.Context()` function, with the
 shortcuts `mvr.Done()` and `mvr.Err()` both giving access to the corresponding methods of the top context.
-The context is cancelled when any of `syscall.SIGHUP`, `syscall.SIGINT`, or `syscall.SIGTERM` is delivered,
-or `mvr.Cancel()` function is called.
+The context is cancelled when any of `SIGHUP`, `SIGINT`, or `SIGTERM` is delivered,
+or when `mvr.Cancel()` function is called.
 
 Example of attaching a cancellation handler to the top context:
 ```go

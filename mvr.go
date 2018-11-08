@@ -27,10 +27,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 /*
-Package mvr is a minimal viable runtime that provides a top-level context which gets cancelled
-when either os.Interrupt or os.Kill signal is delivered, graceful shutdown by wating for all
-registered goroutines to terminate before exitting the application, simple goroutine pool, and
-asynchronous logger.
+Package mvr is a minimal viable runtime that provides a top-level context cancelled by Unix signals,
+graceful shutdown by wating for all registered goroutines to terminate before exitting the application,
+simple goroutine pool, and asynchronous logger.
 */
 package mvr
 
