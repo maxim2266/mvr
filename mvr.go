@@ -84,7 +84,7 @@ loop:
 		select {
 		case _, running := <-sigch:
 			if running {
-				gcancel()
+				Cancel()
 			} else {
 				break loop
 			}
@@ -98,8 +98,9 @@ loop:
 	for {
 		select {
 		case s := <-logch:
-			os.Stderr.WriteString(s)
-
+			if _, err := os.Stderr.WriteString(s); err != nil {
+				os.Exit(ret)
+			}
 		default:
 			os.Exit(ret)
 		}
