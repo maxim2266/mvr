@@ -82,6 +82,8 @@ func Run(main func() int) {
 	})
 
 	// main loop
+	var err error
+
 loop:
 	for {
 		select {
@@ -93,13 +95,17 @@ loop:
 			}
 
 		case s := <-logch:
-			os.Stderr.WriteString(s)
+			if err == nil {
+				if _, err = os.Stderr.WriteString(s); err != nil {
+					// there is probably nothing we can do at this point,
+					// just give the application a chance to shut down gracefully
+					Cancel()
+				}
+			}
 		}
 	}
 
 	// drain the log queue
-	var err error
-
 	for {
 		select {
 		case s := <-logch:
