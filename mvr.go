@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2018, Maxim Konakov
+Copyright (c) 2018,2019 Maxim Konakov
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -28,7 +28,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /*
 Package mvr is a minimal viable runtime that provides a top-level context cancelled by Unix signals,
-graceful shutdown by wating for all registered goroutines to terminate before exitting the application,
+graceful shutdown by waiting for all registered goroutines to terminate before exitting the application,
 simple goroutine pool, and asynchronous logger.
 */
 package mvr
