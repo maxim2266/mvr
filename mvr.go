@@ -1,3 +1,5 @@
+// +build !windows
+
 /*
 Copyright (c) 2018,2019 Maxim Konakov
 All rights reserved.
@@ -6,13 +8,13 @@ Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
 1. Redistributions of source code must retain the above copyright notice,
- this list of conditions and the following disclaimer.
+   this list of conditions and the following disclaimer.
 2. Redistributions in binary form must reproduce the above copyright notice,
- this list of conditions and the following disclaimer in the documentation
- and/or other materials provided with the distribution.
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
 3. Neither the name of the copyright holder nor the names of its contributors
- may be used to endorse or promote products derived from this software without
- specific prior written permission.
+   may be used to endorse or promote products derived from this software without
+   specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -127,7 +129,7 @@ func Err() error { return gctx.Err() }
 func Done() <-chan struct{} { return gctx.Done() }
 
 // OnCancel registers a function to be called when the top-level context gets cancelled. The timeout parameter
-// specifies the time for the function to complete it's task; if set to 0 the timeout will be DefaultCancellationTimeout.
+// specifies the time for the function to complete its task; if set to 0 the timeout will be DefaultCancellationTimeout.
 // The supplied function will be called with a context that is cancelled when the timeout expires.
 func OnCancel(timeout time.Duration, fn func(context.Context)) {
 	if timeout <= 0 {
