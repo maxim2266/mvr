@@ -39,21 +39,14 @@ The top-level context gets initialised (along with the rest of the package) when
 invokes `mvr.Run()` function. The context is accessible via `mvr.Context()` function, with the
 shortcuts `mvr.Done()` and `mvr.Err()` both giving access to the corresponding methods of the top context.
 The context is cancelled when any of `SIGHUP`, `SIGINT`, or `SIGTERM` is delivered,
-or when `mvr.Cancel()` function is called.
+or when `mvr.Cancel()` function is called. A termination handler can be implemented either as a goroutine
+waiting on `mvr.Done()` channel, or via the provided convenience function `mvr.OnCancel()`, for example:
 
-Example of attaching a cancellation handler to the top context:
 ```go
 srv := &http.Server{ ... }
 
 // termination handler
-mvr.Go(func() {
-	<-mvr.Done()
-
-	// using context.Background() because the top context has just been cancelled.
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-
-	defer cancel()
-
+mvr.OnCancel(10 * time.Second, func(ctx context.Context) {
 	if err := srv.Shutdown(ctx); err != nil {
 		log.Println(err)
 	}
