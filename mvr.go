@@ -41,6 +41,7 @@ import (
 	"runtime"
 	"sync/atomic"
 	"syscall"
+	"time"
 )
 
 // Go starts the given function in a new goroutine registered with the runtime.
@@ -95,11 +96,13 @@ loop:
 	}
 
 	// drain the log queue
+	var err error
+
 	for {
 		select {
 		case s := <-logch:
-			if _, err := os.Stderr.WriteString(s); err != nil {
-				os.Exit(ret)
+			if err == nil {
+				_, err = os.Stderr.WriteString(s)
 			}
 		default:
 			os.Exit(ret)
@@ -122,6 +125,32 @@ func Err() error { return gctx.Err() }
 
 // Done returns the top-level context's cancellation channel.
 func Done() <-chan struct{} { return gctx.Done() }
+
+// OnCancel registers a function to be called when the top-level context gets cancelled. The timeout parameter
+// specifies the time for the function to complete it's task; if set to 0 the timeout will be DefaultCancellationTimeout.
+// The supplied function will be called with a context that is cancelled when the timeout expires.
+func OnCancel(timeout time.Duration, fn func(context.Context)) {
+	if timeout <= 0 {
+		timeout = DefaultCancellationTimeout
+	}
+
+	Go(func() {
+		<-Done()
+
+		// context.Background() because the main context has just been cancelled
+		ctx, cancel := context.WithTimeout(context.Background(), timeout)
+
+		go func() {
+			defer cancel()
+			fn(ctx)
+		}()
+
+		<-ctx.Done()
+	})
+}
+
+// DefaultCancellationTimeout is the default time given to a cancellation function to complete.
+const DefaultCancellationTimeout = 10 * time.Second
 
 // logger (implements io.Writer interface)
 type logger struct{}
