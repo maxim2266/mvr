@@ -73,12 +73,11 @@ func Run(main func() int) {
 	signal.Notify(sigch, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM)
 
 	// start main function
-	var ret int
+	var ret int32
 
 	Go(func() {
 		defer Cancel()
-
-		ret = main()
+		atomic.CompareAndSwapInt32(&ret, 0, int32(main()))
 	})
 
 	// main loop
@@ -99,6 +98,7 @@ loop:
 				if _, err = os.Stderr.WriteString(s); err != nil {
 					// there is probably nothing we can do at this point,
 					// just give the application a chance to shut down gracefully
+					atomic.CompareAndSwapInt32(&ret, 0, -42)
 					Cancel()
 				}
 			}
@@ -113,7 +113,7 @@ loop:
 				_, err = os.Stderr.WriteString(s)
 			}
 		default:
-			os.Exit(ret)
+			os.Exit(int(ret))
 		}
 	}
 }
