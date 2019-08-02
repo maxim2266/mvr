@@ -59,7 +59,12 @@ return srv.ListenAndServe()
 ## Goroutine invocation
 In order to ensure graceful shutdown the package keeps track of all goroutines invoked
 (directly or indirectly) through its API. The simplest way to start a goroutine is `mvr.Go()` function that
-provides functionality similar to the `go` keyword. Another way of running a function in a separate
+provides functionality similar to the `go` keyword:
+```go
+mvr.Go(func() { ... })
+```
+
+Another way of running a function in a separate
 goroutine is `mvr.Async()`, which takes a function to launch, of type `func() error`, and returns
 a channel to which the error (if any) will be delivered upon the function completion.
 Typical usage scenario:
