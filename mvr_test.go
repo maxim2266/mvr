@@ -31,12 +31,11 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package mvr
 
 import (
+	"bytes"
 	"context"
 	"errors"
-	"io/ioutil"
 	"log"
 	"math/rand"
-	"os"
 	"runtime"
 	"strconv"
 	"sync"
@@ -47,7 +46,28 @@ import (
 
 func TestMain(m *testing.M) {
 	rand.Seed(time.Now().UnixNano())
+
+	log.SetFlags(0)
+	log.SetOutput(&loggerOutput) // to capture logger output
 	Run(m.Run)
+}
+
+var loggerOutput bytes.Buffer
+
+func TestLogger(t *testing.T) {
+	// write some log
+	log.Println("zzz")
+	log.Println("aaa")
+	log.Println("bbb")
+
+	// wait a moment
+	time.Sleep(10 * time.Millisecond)
+
+	// check
+	if res := loggerOutput.String(); res != "zzz\naaa\nbbb\n" {
+		t.Errorf("Unexpected string: %q", res)
+		return
+	}
 }
 
 func TestGo(t *testing.T) {
@@ -283,64 +303,6 @@ func TestParallelFeed(t *testing.T) {
 
 	if res != 10 {
 		t.Error("Unexpected result:", res, "instead of", N)
-		return
-	}
-}
-
-func TestLogger(t *testing.T) {
-	// logger flags
-	flags := log.Flags()
-
-	log.SetFlags(0)
-
-	defer log.SetFlags(flags)
-
-	// create temp. file
-	tmp, err := ioutil.TempFile(os.TempDir(), "tmp")
-
-	if err != nil {
-		t.Error(err)
-		return
-	}
-
-	fname := tmp.Name()
-
-	defer func() {
-		tmp.Close()
-		os.Remove(fname)
-	}()
-
-	t.Log("Temp. file:", fname)
-
-	// replace stderr
-	prev := os.Stderr
-	os.Stderr = tmp
-
-	defer func() { os.Stderr = prev }()
-
-	// write some log
-	log.Println("zzz")
-	log.Println("aaa")
-	log.Println("bbb")
-
-	time.Sleep(10 * time.Millisecond)
-
-	if err = tmp.Sync(); err != nil {
-		t.Error(err)
-		return
-	}
-
-	// read result
-	s, err := ioutil.ReadFile(fname)
-
-	if err != nil {
-		t.Error(err)
-		return
-	}
-
-	// check
-	if res := string(s); res != "zzz\naaa\nbbb\n" {
-		t.Errorf("Unexpected string: %q", res)
 		return
 	}
 }

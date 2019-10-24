@@ -158,8 +158,8 @@ to allow for a user-managed context to control the goroutine pool.
 ## Logging
 The package does _not_ replace the logger from the standard library, and it provides no additional
 API. Instead, the library replaces the target `io.Writer` to which the logger writes. This _should_
-have no effect on any other logging layer built on top of the standard `log` package. The log
-writes to `os.Stderr`.
+have no effect on any other logging layer built on top of the standard `log` package. To use a non-default
+writer call `log.SetOutput()` before `mvr.Run()`.
 
 ## Testing
 For unit-testing of an application utilising this package the correct initialisation of the runtime can be
@@ -173,12 +173,12 @@ func TestMain(m *testing.M) {
 ## Limitations
 - The package has **no way** of intercepting calls to terminating functions like
 `log.Fatal()` or `os.Exit()`, and no guarantees can be given if any of those functions is invoked.
-- The package replaces the `io.Writer` used by the standard logger, so the writer should not be replaced
-again by the application;
+- The package replaces the `io.Writer` used by the standard logger, so the writer must not be replaced
+again after `mvr.Run()` has started;
 - Only goroutines started via the package API are waited on before termination;
 - The package does not handle panics, although certain effort has been made to make sure resources
 are released when a panic is triggered.
 
 #### Project status
-Tested on Linux Mint 18.3 using Go version 1.10.3.
+Tested on Linux Mint 19.2 using Go version 1.13.3.
 

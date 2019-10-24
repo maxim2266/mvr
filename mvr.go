@@ -37,6 +37,7 @@ package mvr
 
 import (
 	"context"
+	"io"
 	"log"
 	"os"
 	"os/signal"
@@ -63,10 +64,12 @@ func Go(fn func()) {
 }
 
 // Run takes the application entry point function as a parameter, and executes it in a separate goroutine.
-// The return value of the main function will be passed over to os.Exit(). The main function cancels
-// the top-level context upon exit. The Run() function itself never returns.
+// The return value of the main function will be passed over to os.Exit(). Exit from the main function also cancels
+// the top-level context. The Run() function itself never returns.
 func Run(main func() int) {
 	// logger set-up
+	logit := getLogWriter()
+
 	log.SetOutput(logger{})
 
 	// signal handlers
@@ -95,9 +98,8 @@ loop:
 
 		case s := <-logch:
 			if err == nil {
-				if _, err = os.Stderr.WriteString(s); err != nil {
-					// there is probably nothing we can do at this point,
-					// just give the application a chance to shut down gracefully
+				if _, err = logit(s); err != nil {
+					// the logger has failed, initiate shutdown
 					atomic.CompareAndSwapInt32(&ret, 0, -42)
 					Cancel()
 				}
@@ -110,11 +112,23 @@ loop:
 		select {
 		case s := <-logch:
 			if err == nil {
-				_, err = os.Stderr.WriteString(s)
+				_, err = logit(s)
 			}
 		default:
 			os.Exit(int(ret))
 		}
+	}
+}
+
+func getLogWriter() func(string) (int, error) {
+	w := log.Writer()
+
+	if sw, ok := w.(io.StringWriter); ok {
+		return sw.WriteString
+	}
+
+	return func(s string) (int, error) {
+		return w.Write([]byte(s))
 	}
 }
 
