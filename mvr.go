@@ -100,7 +100,7 @@ loop:
 			if err == nil {
 				if _, err = logit(s); err != nil {
 					// the logger has failed, initiate shutdown
-					atomic.CompareAndSwapInt32(&ret, 0, -42)
+					atomic.CompareAndSwapInt32(&ret, 0, 127)
 					Cancel()
 				}
 			}
