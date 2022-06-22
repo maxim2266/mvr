@@ -64,8 +64,8 @@ func Go(fn func()) {
 }
 
 // Run takes the application entry point function as a parameter, and executes it in a separate goroutine.
-// The return value of the main function will be passed over to os.Exit(). Exit from the main function also cancels
-// the top-level context. The Run() function itself never returns.
+// The return value of the main function will be passed over to os.Exit(). Exit from the main function also
+// cancels the top-level context. The Run() function itself never returns.
 func Run(main func() int) {
 	// logger set-up
 	logit := getLogWriter()
@@ -73,7 +73,7 @@ func Run(main func() int) {
 	log.SetOutput(logger{})
 
 	// signal handlers
-	signal.Notify(sigch, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM)
+	signal.Notify(sigch, syscall.SIGQUIT, syscall.SIGINT, syscall.SIGTERM)
 
 	// start main function
 	var ret int32

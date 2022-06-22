@@ -38,7 +38,7 @@ The `mvr.Run()` function never returns.
 The top-level context gets initialised (along with the rest of the package) when the application
 invokes `mvr.Run()` function. The context is accessible via `mvr.Context()` function, with the
 shortcuts `mvr.Done()` and `mvr.Err()` both giving access to the corresponding methods of the top context.
-The context is cancelled when any of `SIGHUP`, `SIGINT`, or `SIGTERM` is delivered,
+The context is cancelled when any of `SIGQUIT`, `SIGINT`, or `SIGTERM` is delivered,
 or when `mvr.Cancel()` function is called. A termination handler can be implemented either as a goroutine
 waiting on `mvr.Done()` channel, or via the provided convenience function `mvr.OnCancel()`, for example:
 
