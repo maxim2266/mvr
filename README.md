@@ -1,7 +1,6 @@
 # Minimal Viable Runtime (MVR)
 
 [![GoDoc](https://godoc.org/github.com/maxim2266/mvr?status.svg)](https://godoc.org/github.com/maxim2266/mvr)
-[![Go Report Card](https://goreportcard.com/badge/github.com/maxim2266/mvr)](https://goreportcard.com/report/github.com/maxim2266/mvr)
 [![License: BSD 3-Clause](https://img.shields.io/badge/License-BSD_3--Clause-yellow.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
 ## Motivation
